@@ -1,5 +1,4 @@
-# Semantic Versioning
-## Version
+# Version
 
 A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
 
