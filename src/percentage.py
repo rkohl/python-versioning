@@ -33,14 +33,14 @@ class Percentage:
   @property
   def percent(self) -> str:
     """ Returns the percentage value as a string with a '%' symbol."""
-    return f"{self.value}%"
+    return f"{round(self.value*100, self.precision)}%"
 
   @property
   def decimal(self) -> float:
      """ Returns the percentage value as a decimal."""
-     return self.value / 100
+     return self.value
 
   @property
   def fraction(self) -> str:
       """ Returns the percentage value as a fraction."""
-      return f"{self.value}/100"
+      return f"{round(self.value*100)}/100"

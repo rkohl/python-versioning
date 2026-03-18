@@ -9,13 +9,9 @@ def precision(value:float) -> int:
   if value == 0:
       return 0
 
-  abs_num = abs(value)
-  if abs_num < 0.0001:
-      # Count leading zeros after decimal
-      exponent = int(math.floor(math.log10(abs_num)))
-      return abs(exponent) + 3
+  s = str(value)
+  if '.' in s:
+ 
+    return len(s.split('.')[1])
   else:
-    exponent = decimal.Decimal(str(value)).as_tuple().exponent
-    if isinstance(exponent, int):
-      p = abs(exponent)
     return 0

@@ -1,8 +1,8 @@
 
-class OrdinalNumber:
+class OrdinalNumber(int):
   """A class to represent an ordinal number."""
 
-  def __new__(cls, number: int):
+  def __new__(cls, number):
     return int.__new__(cls, number)
 
   def __init__(self, number: int):
