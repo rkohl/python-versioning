@@ -95,6 +95,7 @@ class Version(_Comparable):
 
       else:
         self._set_version(version)
+        self._all_versions.append(version)
 
     def _set_version(self, version: Semantic) -> None:
         checked = self._check(version)

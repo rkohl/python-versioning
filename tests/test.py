@@ -283,7 +283,7 @@ class TestVersionAddMethod(unittest.TestCase):
         v = Version('1.0.0')
         v.add('2.0.0')
         v.add('3.0.0')
-        self.assertEqual(len(v._all_versions), 2)
+        self.assertEqual(len(v._all_versions), 3)
 
 
 class TestVersionLatestProperty(unittest.TestCase):
@@ -322,12 +322,13 @@ class TestVersionsProperty(unittest.TestCase):
 
     def test_versions_single(self):
         v = Version('1.0.0')
-        self.assertEqual(v.versions, [])
+        self.assertEqual(len(v.versions), 1)
+        self.assertEqual(v.versions[0], Version('1.0.0'))
 
     def test_versions_after_add(self):
         v = Version('1.0.0')
         v.add('2.0.0')
-        self.assertEqual(len(v.versions), 1)
+        self.assertEqual(len(v.versions), 2)
 
 
 if __name__ == '__main__':
