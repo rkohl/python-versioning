@@ -9,7 +9,7 @@ if sys.version_info >= (3, 0):
 else:
   from itertools import izip_longest
 
-Semantic: TypeAlias = str|int
+Semantic: TypeAlias = str
 SemanticList: TypeAlias = List[Semantic]
 Semantics: TypeAlias = SemanticList | Semantic
 
@@ -90,12 +90,12 @@ class Version(_Comparable):
   def _check(self, version: Semantics):
     if isinstance(version, list):
       for v in version:
-        match = _re.match(str(v))
+        match = _re.match(v)
         if not match:
           raise VersionError('invalid version %r' % v)
-      return _re.match(str(version[-1]))
+      return _re.match(version[-1])
     else:
-      match = _re.match(str(version))
+      match = _re.match(version)
       if not match:
         raise VersionError('invalid version %r' % version)
       return match
