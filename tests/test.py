@@ -1,10 +1,6 @@
-import sys
-import os
 import unittest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from src import Version, VersionError
+from version import Version, VersionError
 
 
 class TestVersionParsing(unittest.TestCase):
@@ -291,21 +287,21 @@ class TestVersionLatestProperty(unittest.TestCase):
 
     def test_latest_from_list(self):
         v = Version(['1.0.0', '3.0.0', '2.0.0'])
-        self.assertEqual(v.latest.version, '3.0.0')
+        self.assertEqual(v.latest, '3.0.0')
 
     def test_latest_after_add(self):
         v = Version('1.0.0')
         v.add('5.0.0')
         v.add('3.0.0')
-        self.assertEqual(v.latest.version, '5.0.0')
+        self.assertEqual(v.latest, '5.0.0')
 
     def test_latest_single_version(self):
         v = Version('1.2.3')
-        self.assertEqual(v.latest.version, '1.2.3')
+        self.assertEqual(v.latest, '1.2.3')
 
-    def test_latest_returns_version_instance(self):
+    def test_latest_returns_string(self):
         v = Version(['1.0.0', '2.0.0'])
-        self.assertIsInstance(v.latest, Version)
+        self.assertIsInstance(v.latest, str)
 
 
 class TestVersionsProperty(unittest.TestCase):
@@ -329,6 +325,53 @@ class TestVersionsProperty(unittest.TestCase):
         v = Version('1.0.0')
         v.add('2.0.0')
         self.assertEqual(len(v.versions), 2)
+
+
+class TestVersionRemoveMethod(unittest.TestCase):
+    """Tests for the remove() method."""
+
+    def test_remove_non_current_version(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('1.0.0')
+        self.assertNotIn('1.0.0', v._all_versions)
+
+    def test_remove_current_version_updates_current(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('3.0.0')
+        self.assertEqual(str(v), '2.0.0')
+
+    def test_remove_current_version_picks_next_latest(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('3.0.0')
+        self.assertEqual(v.latest, '2.0.0')
+
+    def test_remove_middle_version(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('2.0.0')
+        self.assertNotIn('2.0.0', v._all_versions)
+        self.assertEqual(str(v), '3.0.0')
+
+    def test_remove_reduces_tracked_count(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('1.0.0')
+        self.assertEqual(len(v._all_versions), 2)
+
+    def test_remove_nonexistent_raises(self):
+        v = Version(['1.0.0', '2.0.0'])
+        with self.assertRaises(VersionError):
+            v.remove('9.9.9')
+
+    def test_remove_only_version_raises(self):
+        v = Version('1.0.0')
+        with self.assertRaises(VersionError):
+            v.remove('1.0.0')
+
+    def test_remove_leaves_remaining_intact(self):
+        v = Version(['1.0.0', '2.0.0', '3.0.0'])
+        v.remove('2.0.0')
+        remaining = [str(ver) for ver in v.versions]
+        self.assertIn('1.0.0', remaining)
+        self.assertIn('3.0.0', remaining)
 
 
 if __name__ == '__main__':

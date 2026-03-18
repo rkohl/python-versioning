@@ -1,18 +1,15 @@
 # Version
 
-A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings.
+A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
 
-## Why
-
-Versioning is a solved problem on paper, but wrangling version strings in practice often means either pulling in a heavy dependency or writing ad-hoc string comparisons that silently break on edge cases like pre-release identifiers. This library gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
 
 ## Requirements
 
-- Python 3.12+
+- Python 3.7+
 
 ## Installation
 
-Copy `src/` into your project, or install from source:
+Copy `version.py` into your project, or install from source:
 
 ```bash
 pip install .
@@ -21,30 +18,35 @@ pip install .
 Then import:
 
 ```python
-from src import Version, VersionError
+from version import version
 ```
-
 ---
 
-## Features
 
-### Parse a version string
+## Usage
+
+### Major, Minor, Patch
 
 ```python
 v = Version('1.4.2')
 print(v.major)        # 1
 print(v.minor)        # 4
 print(v.patch)        # 2
+print(v.version)      # '1.4.2'
 ```
 
 ### Pre-release and build metadata
 
 ```python
 v = Version('2.0.0-alpha.1+build.42')
+print(v.major)        # 2
+print(v.minor)        # 0
+print(v.patch)        # 0
 print(v.pre_release)  # ['alpha', 1]
 print(v.build)        # ['build', 42]
-print(str(v))         # '2.0.0-alpha.1+build.42'
+print(v.version)      # '2.0.0-alpha.1+build.42'
 ```
+</br>
 
 ### Compare versions
 
@@ -56,14 +58,14 @@ Version('1.0.0-alpha') < Version('1.0.0') # True  (pre-release < release)
 Version('1.0.0') == Version('1.0.0')      # True
 Version('2.0.0') > Version('1.9.9')       # True
 ```
-
 Comparing against a non-`Version` raises a `TypeError`:
 
 ```python
 Version('1.0.0') < '1.0.1'  # raises TypeError
 ```
+</br>
 
-### Track multiple versions
+### Track Multiple Versions
 
 Initialize with a list and the object is automatically set to the latest valid version:
 
@@ -72,12 +74,20 @@ v = Version(['1.0.0', '3.2.1', '2.0.0-beta', 'not-a-version'])
 print(v)  # '3.2.1'  — invalid entries are silently skipped
 ```
 
-Add versions over time:
+Add additional versions over time. If a new version is added, it becomes latest version:
 
 ```python
 v = Version('1.0.0')
+print(v.version)      # '1.0.0'
+
 v.add('2.0.0')
+print(v.version)      # '2.0.0'
+
 v.add('1.5.0')
+print(v.version)      # '2.0.0'
+
+v.add('3.0.1')
+print(v.version)      # '3.0.1'
 ```
 
 Duplicates are ignored and invalid strings raise `VersionError`:
@@ -87,14 +97,43 @@ v.add('1.0.0')        # no-op, already tracked
 v.add('bad-version')  # raises VersionError
 ```
 
+Remove versions:
+
+```python
+v = Version('1.0.0')
+v.add('2.0.0')
+v.remove('1.0.0')
+```
+
+Removing the only version raises `VersionError`:
+
+```python
+v = Version('1.0.0')
+v.remove('1.0.0') # Cannot remove this version
+```
+
+Removing the latest version reverts to the next latest:
+
+```python
+v = Version('1.0.0')
+v.add('2.0.0')
+v.add('2.1.0')
+print(v.version)      # '2.1.0'
+
+v.remove('2.1.0') 
+print(v.version)      # '2.0.0'
+```
+</br>
+
 ### Get the latest tracked version
 
 ```python
 v = Version('1.0.0')
 v.add('3.0.0')
 v.add('2.0.0')
-print(v.latest)  # Version('3.0.0')
+print(v.latest)  # '3.0.0'
 ```
+</br>
 
 ### Inspect all tracked versions
 
@@ -151,9 +190,11 @@ Version(['bad'])      # VersionError: No valid versions found in the list
 
 ---
 
-## API Reference
+# API Reference
 
-### `Version(version: str | list[str])`
+```python 
+Version(version: str | list[str])
+```
 
 Creates a `Version` instance.
 
@@ -174,6 +215,10 @@ Creates a `Version` instance.
 ### `Version.add(version: str) -> None`
 
 Adds a version string to the tracked list. No-op if already present. Raises `VersionError` if the string is invalid.
+
+### `Version.remove(version: str) -> None`
+
+Removes a version string from the tracked list. Raises `VersionError` if attempt to remove only version.
 
 ### `VersionError`
 

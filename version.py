@@ -44,7 +44,7 @@ class _Seq:
                 return s is None
             if type(s) is type(o):
                 if s != o:
-                    return s < o  # type: ignore[operator]
+                    return s < o
             else:
                 return isinstance(s, int)
         return False
@@ -68,25 +68,35 @@ class Version:
             self._parse(version)
             self._all_versions.append(version)
 
-    def _parse(self, version: str) -> None:
-        m = _VERSION_REGEX.match(version)
-        if not m:
-            raise VersionError(f'invalid version {version!r}')
-        self.major, self.minor, self.patch = int(m[1]), int(m[2]), int(m[3])
-        self.pre_release = _parse_group(m[4])
-        self.build = _parse_group(m[5])
-
     def add(self, version: str) -> None:
-        """Add a version to the tracked list."""
-        if version not in self._all_versions:
-            if not _VERSION_REGEX.match(version):
-                raise VersionError(f'invalid version {version!r}')
-            self._all_versions.append(version)
+      """Add a version to the tracked list."""
+      
+      if version not in self._all_versions:
+        if not _VERSION_REGEX.match(version):
+            raise VersionError(f'invalid version {version!r}')
+        self._all_versions.append(version)
+        if Version(version) > Version(str(self)):
+          self._parse(max(Version(v) for v in self._all_versions).version)
 
+    def remove(self, version: str) -> None:
+      """Remove a version from the tracked list."""
+      
+      if version not in self._all_versions:
+        raise VersionError(f'Version {version!r} not found in tracked versions')
+        
+      if len(self.versions) <= 1:
+        raise VersionError('Cannot remove this version')
+      elif version == str(self):
+        self._all_versions.remove(version)
+        self._parse(self.latest)
+      else:
+        self._all_versions.remove(version)
+
+    
     @property
-    def latest(self) -> Version:
+    def latest(self) -> str:
         """Return the latest version from the tracked list."""
-        return max(self.versions)
+        return max(self.versions).version
 
     @property
     def version(self) -> str:
@@ -95,8 +105,8 @@ class Version:
 
     @property
     def versions(self) -> list[Version]:
-        """Return all tracked versions as Version objects."""
-        return [Version(v) for v in self._all_versions]
+        """Return all tracked versions as Version objects sorted descending."""
+        return sorted([Version(v) for v in self._all_versions], reverse=True)
 
     def __str__(self) -> str:
         s = f'{self.major}.{self.minor}.{self.patch}'
@@ -131,3 +141,11 @@ class Version:
                 return _Seq(self.build) < _Seq(other.build)
             return bool(self.build)
         return False
+
+    def _parse(self, version: str) -> None:
+      m = _VERSION_REGEX.match(version)
+      if not m:
+          raise VersionError(f'invalid version {version!r}')
+      self.major, self.minor, self.patch = int(m[1]), int(m[2]), int(m[3])
+      self.pre_release = _parse_group(m[4])
+      self.build = _parse_group(m[5])
