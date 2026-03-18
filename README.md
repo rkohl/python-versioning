@@ -1,19 +1,27 @@
 # Version
 
 A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
+___ 
 
 
-## Installation
+### Installation
 
-Install **semantic-version** using pip
+Install **semantic-version** using pip:
 
 ```shell
 pip install semantic-version
 ```
 **Requirements:** Python 3.7+
+___
+
+
+## Features
+- **Single Class** &mdash; A single `Version` class that handles semantic versioning.
+- **Full SemVer Support** &mdash; Supports Major, minor, patch, pre-release and build metadata
+- **Comparable** &mdash; All six comparison operators are built in (`<`, `<=`, `>`, `>=`, `==`, `!=`)
+- **Track Multiple Versions** &mdash; Track mulitple versions in a single instance.
 
 ---
-
 
 ## Usage
 
@@ -25,7 +33,11 @@ from version import Version
 
 ### Major, Minor, Patch
 
+Define `Version` class with SemVer `1.4.2`:
+
 ```python
+from version import Version
+
 v = Version('1.4.2')
 print(v.major)        # 1
 print(v.minor)        # 4
@@ -35,7 +47,11 @@ print(v.version)      # '1.4.2'
 
 ### Pre-release and build metadata
 
+Define `Version` class with SemVer `2.0.0-alpha.1+build.42`:
+
 ```python
+from version import Version
+
 v = Version('2.0.0-alpha.1+build.42')
 print(v.major)        # 2
 print(v.minor)        # 0
@@ -44,7 +60,6 @@ print(v.pre_release)  # ['alpha', 1]
 print(v.build)        # ['build', 42]
 print(v.version)      # '2.0.0-alpha.1+build.42'
 ```
-</br>
 
 ### Compare versions
 
@@ -61,7 +76,6 @@ Comparing against a non-`Version` raises a `TypeError`:
 ```python
 Version('1.0.0') < '1.0.1'  # raises TypeError
 ```
-</br>
 
 ### Track Multiple Versions
 
@@ -121,7 +135,6 @@ print(v.version)      # '2.1.0'
 v.remove('2.1.0') 
 print(v.version)      # '2.0.0'
 ```
-</br>
 
 ### Get the latest tracked version
 
@@ -131,7 +144,6 @@ v.add('3.0.0')
 v.add('2.0.0')
 print(v.latest)  # '3.0.0'
 ```
-</br>
 
 ### Inspect all tracked versions
 
@@ -224,7 +236,9 @@ Subclass of `Exception`. Raised when a version string does not conform to the Se
 
 ---
 
-## Running the Tests
+## Run Tests
+
+**80/80 tests passed**
 
 ```bash
 python -m pytest tests/test.py -v
