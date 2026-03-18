@@ -1,5 +1,5 @@
 [project]
-name = "semantic-version"
+name = "python-versioning"
 version = "1.0.0"
 readme = "README.md"
 license = "MIT"

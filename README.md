@@ -1,4 +1,5 @@
 # Version
+### Python Semantic Versioning
 
 A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
 ___ 
@@ -6,10 +7,10 @@ ___
 
 ### Installation
 
-Install **semantic-version** using pip:
+Install **python-versioning** using pip:
 
 ```shell
-pip install semantic-version
+pip install python-versioning
 ```
 **Requirements:** Python 3.7+
 ___
