@@ -8,6 +8,7 @@ __pycache__/
 
 .replit
 .agents/
+requirements.txt
 
 # Distribution / packaging
 .Python

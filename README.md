@@ -1,29 +1,28 @@
-# Version
+# Semantic Versioning
+## Version
 
 A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
 
 
-## Requirements
-
-- Python 3.7+
-
 ## Installation
 
-Copy `version.py` into your project, or install from source:
+Install **semantic-version** using pip
 
-```bash
-pip install .
+```shell
+pip install semantic-version
 ```
+**Requirements:** Python 3.7+
 
-Then import:
-
-```python
-from version import version
-```
 ---
 
 
 ## Usage
+
+First import:
+
+```python
+from version import Version
+```
 
 ### Major, Minor, Patch
 

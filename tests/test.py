@@ -1,7 +1,6 @@
 import unittest
 
-from version import Version, VersionError
-
+from src import Version, VersionError
 
 class TestVersionParsing(unittest.TestCase):
     """Tests for parsing valid and invalid version strings."""

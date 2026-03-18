@@ -1,42 +1,39 @@
 [project]
-name = "Version"
+name = "semantic-version"
 version = "1.0.0"
-description = "Semantic Version Handling"
-license = "BSD-3-Clause"
+readme = "README.md"
+license = "MIT"
+description = "A lightweight Python library implementation for parsing, comparing, and managing semantic version strings."
 authors = [ 
   { name = "rkohl"}
 ]
+keywords = [
+  "version",
+  "semantic",
+  "semver",
+  "versioning",
+  "semantic versioning",
+  "semantic version",
+  "semantic version parser",
+  "semantic version comparator",
+  "python",
+  "version tracking",
+  "version management",
+  "version control",
+  "version comparison",
+  "major version",
+  "minor version",
+  "patch version",
+  "pre-release version",
+  "build metadata",
+  "version string",
+  "ver number",
+  "ver"
+  ]
+  
 requires-python = ">=3.7"
 dependencies = []
 
 [tool.setuptools]
 packages = ["version"]
-
-[tool.ruff.format]
-indent-style = "space"
-indent-size = 2
-quote-style = "double"
-
-[tool.ruff]
-select = ['E', 'W', 'F', 'I', 'B', 'C4', 'ARG', 'SIM']
-ignore = ['W291', 'W292', 'W293']
-line-length = 88
-indent-width = 2
-
-[tool.ruff.lint]
-select = ["I"]
-extend-select = ["I"]
-
-[tool.pyright]
-useLibraryCodeForTypes = true
-include = ["src"]
-exclude = [".cache", "tests"]
-pythonVersion = "3.12"
-indentSize = 2
-indentStyle = "space"
-reportUnusedImport = true
-reportUnusedClass = true
-reportUnusedFunction = true
-reportUnusedVariable = true
-reportDuplicateImport = true
-reportMissingImports = true
+package-dir = {"version" = "src"}
