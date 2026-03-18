@@ -1,5 +1,4 @@
 
-
 class Progress[I: float|int, T: float|int]:
   """A class to represent a progress value with optional scaling and precision."""
 
@@ -33,6 +32,7 @@ class Progress[I: float|int, T: float|int]:
       return 0
     return round(float(self.progress) / float(self.total) * 100, self.precision)
 
+  @property
   def __call__(self) -> float:
     """ Returns the progress value."""
     return self.value
