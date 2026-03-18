@@ -1,0 +1,43 @@
+[project]
+name = "xUtility"
+version = "1.0.0"
+description = "Utility classes and functions"
+license = "BSD-3-Clause"
+authors = [ 
+  { name = "rkohl"}
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools]
+packages = ["xutil"]
+package-dir = {"xutil" = "src"}
+
+[tool.ruff.format]
+indent-style = "space"
+indent-size = 2
+quote-style = "double"
+
+[tool.ruff]
+select = ['E', 'W', 'F', 'I', 'B', 'C4', 'ARG', 'SIM']
+ignore = ['W291', 'W292', 'W293']
+line-length = 88
+indent-width = 2
+
+[tool.ruff.lint]
+select = ["I"]
+extend-select = ["I"]
+
+[tool.pyright]
+useLibraryCodeForTypes = true
+include = ["src"]
+exclude = [".cache", "tests"]
+pythonVersion = "3.12"
+indentSize = 2
+indentStyle = "space"
+reportUnusedImport = true
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUnusedVariable = true
+reportDuplicateImport = true
+reportMissingImports = true
