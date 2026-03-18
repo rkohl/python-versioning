@@ -2,12 +2,7 @@ from __future__ import annotations
 
 import re
 from functools import total_ordering
-from typing import TypeAlias
 from itertools import zip_longest
-
-SemVer: TypeAlias = str
-SemVerList: TypeAlias = list[SemVer]
-SemVers: TypeAlias = SemVerList | SemVer
 
 _VERSION_REGEX = re.compile(
     r'^'
@@ -59,7 +54,7 @@ class _Seq:
 class Version:
     """Represents a semantic version."""
 
-    def __init__(self, version: SemVers):
+    def __init__(self, version: str | list[str]):
         self._all_versions: list[str] = []
 
         if isinstance(version, list):
@@ -73,7 +68,7 @@ class Version:
             self._parse(version)
             self._all_versions.append(version)
 
-    def _parse(self, version: SemVer) -> None:
+    def _parse(self, version: str) -> None:
         m = _VERSION_REGEX.match(version)
         if not m:
             raise VersionError(f'invalid version {version!r}')
@@ -81,7 +76,7 @@ class Version:
         self.pre_release = _parse_group(m[4])
         self.build = _parse_group(m[5])
 
-    def add(self, version: SemVer) -> None:
+    def add(self, version: str) -> None:
         """Add a version to the tracked list."""
         if version not in self._all_versions:
             if not _VERSION_REGEX.match(version):
@@ -94,7 +89,7 @@ class Version:
         return max(self.versions)
 
     @property
-    def version(self) -> SemVer:
+    def version(self) -> str:
         """Return the string representation of the version."""
         return str(self)
 
