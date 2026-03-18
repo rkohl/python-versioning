@@ -80,35 +80,34 @@ class Version(_Comparable):
     """Represents a semantic version."""
 
     def __init__(self, version: Semantics):
-        self._all_versions: list[str] = []
-        
-        if isinstance(version, list):
-            self._all_versions = [str(v) for v in version if _VERSION_REGEX.match(v)]
-            if self._all_versions:
-                latest_version = max(
-                    [Version(v) for v in self._all_versions],
-                    key=lambda v: (v.major, v.minor, v.patch)
-                )
-                version = latest_version.version
-        
+      self._all_versions: list[str] = []
+
+      if isinstance(version, list):
+        if len(version) == 0:
+          raise VersionError('No versions provided in the list')
+      
+        self._all_versions = [str(v) for v in version if _VERSION_REGEX.match(v)]
+        if not self._all_versions:
+          raise VersionError('No valid versions found in the list')
+          
+        latest_version = max([Version(v) for v in self._all_versions], key=lambda v: (v.major, v.minor, v.patch))
+        self._set_version(latest_version.version)
+
+      else:
+        self._set_version(version)
+
+    def _set_version(self, version: Semantic) -> None:
         checked = self._check(version)
         self.major, self.minor, self.patch = map(int, checked.groups()[:3])
         self.pre_release = _make_group(checked.group(4))
         self.build = _make_group(checked.group(5))
 
-    def _check(self, version: Semantics) -> re.Match:
+    def _check(self, version: Semantic) -> re.Match:
         """Validate version string and return regex match."""
-        if isinstance(version, list):
-            for v in version:
-                match = _VERSION_REGEX.match(v)
-                if not match:
-                    raise VersionError(f'invalid version {v!r}')
-            return _VERSION_REGEX.match(version[-1])
-        else:
-            match = _VERSION_REGEX.match(version)
-            if not match:
-                raise VersionError(f'invalid version {version!r}')
-            return match
+        match = _VERSION_REGEX.match(version)
+        if not match:
+          raise VersionError(f'invalid version {version!r}')
+        return match
 
     def add(self, version: Semantic) -> None:
         """Add a version to the list of tracked versions."""
@@ -150,20 +149,20 @@ class Version(_Comparable):
 
     def __lt__(self, other) -> bool:
         self._assume_to_be_comparable(other)
-        
+
         if self._mmp() != other._mmp():
             return self._mmp() < other._mmp()
-        
+
         if self.pre_release != other.pre_release:
             if self.pre_release and other.pre_release:
                 return _Seq(self.pre_release) < _Seq(other.pre_release)
             return bool(self.pre_release)
-        
+
         if self.build != other.build:
             if self.build and other.build:
                 return _Seq(self.build) < _Seq(other.build)
             return bool(self.build)
-        
+
         return False
 
     def __eq__(self, other) -> bool:
