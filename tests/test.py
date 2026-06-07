@@ -1,6 +1,6 @@
 import unittest
 
-from src import Version, VersionError, MAJOR, MINOR, PATCH
+from src import Version, VersionError, MAJOR, MINOR, PATCH, BUILD
 
 class TestVersionParsing(unittest.TestCase):
     """Tests for parsing valid and invalid version strings."""
@@ -427,6 +427,47 @@ class TestVersionIncrementMethod(unittest.TestCase):
         v.increment(PATCH)
         self.assertEqual(str(v), '1.0.1')
         self.assertEqual(v.build, [])
+
+    def test_increment_build_no_existing_defaults_to_b1(self):
+        v = Version('1.0.0')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+b1')
+
+    def test_increment_build_b_prefix(self):
+        v = Version('1.0.0+b1')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+b2')
+
+    def test_increment_build_numeric_last_element(self):
+        v = Version('1.0.0+build.3')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+build.4')
+
+    def test_increment_build_pure_integer(self):
+        v = Version('1.0.0+5')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+6')
+
+    def test_increment_build_no_trailing_digits_appends(self):
+        v = Version('1.0.0+nightly')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+nightly.1')
+
+    def test_increment_build_preserves_pre_release(self):
+        v = Version('1.0.0-alpha')
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0-alpha+b1')
+
+    def test_increment_build_adds_to_tracked_list(self):
+        v = Version('1.0.0')
+        v.increment(BUILD)
+        self.assertIn('1.0.0+b1', v._all_versions)
+
+    def test_increment_build_multiple_times(self):
+        v = Version('1.0.0')
+        v.increment(BUILD)
+        v.increment(BUILD)
+        self.assertEqual(str(v), '1.0.0+b2')
 
     def test_increment_invalid_part_raises(self):
         v = Version('1.0.0')

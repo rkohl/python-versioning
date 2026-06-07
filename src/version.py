@@ -16,6 +16,7 @@ _VERSION_REGEX = re.compile(
 MAJOR = 'major'
 MINOR = 'minor'
 PATCH = 'patch'
+BUILD = 'build'
 
 
 class VersionError(Exception):
@@ -99,17 +100,41 @@ class Version:
 
     
     def increment(self, part: str) -> None:
-        """Increment major, minor, or patch using the MAJOR, MINOR, or PATCH constants."""
+        """Increment major, minor, patch, or build using the MAJOR, MINOR, PATCH, or BUILD constants."""
         if part == MAJOR:
             new_version = f'{self.major + 1}.0.0'
         elif part == MINOR:
             new_version = f'{self.major}.{self.minor + 1}.0'
         elif part == PATCH:
             new_version = f'{self.major}.{self.minor}.{self.patch + 1}'
+        elif part == BUILD:
+            new_version = self._next_build()
         else:
-            raise ValueError(f'invalid part {part!r}: use MAJOR, MINOR, or PATCH')
+            raise ValueError(f'invalid part {part!r}: use MAJOR, MINOR, PATCH, or BUILD')
         self._all_versions.append(new_version)
         self._parse(new_version)
+
+    def _next_build(self) -> str:
+        """Return a new version string with the build metadata incremented."""
+        mmp = f'{self.major}.{self.minor}.{self.patch}'
+        pre = '-' + '.'.join(str(c) for c in self.pre_release) if self.pre_release else ''
+
+        if not self.build:
+            return f'{mmp}{pre}+b1'
+
+        parts = list(self.build)
+        last = parts[-1]
+
+        if isinstance(last, int):
+            parts[-1] = last + 1
+        else:
+            m = re.match(r'^(.*?)(\d+)$', last)
+            if m:
+                parts[-1] = m.group(1) + str(int(m.group(2)) + 1)
+            else:
+                parts.append(1)
+
+        return f'{mmp}{pre}+{".".join(str(x) for x in parts)}'
 
     @property
     def latest(self) -> str:
