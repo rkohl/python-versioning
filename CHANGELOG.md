@@ -8,8 +8,6 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- **`Version.remove(version: str)`** — Remove a version from the tracked list. If the removed version was the current one, the instance automatically falls back to the next highest. Raises `VersionError` if the version is not tracked or if it is the only version remaining.
-
 - **`Version.increment(part: str)`** — Bump a version component in place. The incremented version is appended to the tracked list and becomes the current version. Accepts one of four exported constants:
 
   | Constant | Behaviour |
@@ -25,7 +23,6 @@ All notable changes to this project are documented here.
   - Last identifier is a plain integer → incremented directly
   - Last identifier has no trailing digits → `.1` is appended
 
-- **`MAJOR`, `MINOR`, `PATCH`, `BUILD` constants** — exported from the package for use with `increment()`.
 
 ### Changed
 
@@ -35,8 +32,6 @@ All notable changes to this project are documented here.
 
 - **`add()` method** now updates the current version when the newly added version is higher than the current one.
 
-- **Minimum Python version** lowered from `3.12` to `3.7` by removing `TypeAlias` declarations from `typing`. All other annotations continue to work via `from __future__ import annotations`.
-
 ### Internals
 
 - Replaced the hand-rolled `_Comparable` mixin with `functools.total_ordering`, reducing boilerplate and delegating operator derivation to the standard library.
@@ -45,9 +40,6 @@ All notable changes to this project are documented here.
 - `__str__` uses an f-string for the `major.minor.patch` segment instead of joining a list.
 - `__eq__` compares a single tuple on each side instead of three separate conditions.
 
-### Tests
-
-- Test suite expanded from the initial skeleton to **100 tests** across 9 classes, covering parsing, string representation, all six comparison operators, pre-release and build ordering, list initialisation, `add()`, `remove()`, `increment()` (all four constants), and error handling.
 
 ---
 
@@ -57,5 +49,6 @@ All notable changes to this project are documented here.
 - Support for major, minor, patch, pre-release, and build metadata.
 - List initialisation — automatically selects the highest valid version from a list.
 - `add()` method for tracking additional versions over time.
+- `remove()` method for removing tracked versions.
 - `latest` and `versions` properties.
 - `VersionError` exception for invalid version strings.
