@@ -1,3 +1,3 @@
-from .version import Version, VersionError
+from .version import Version, VersionError, MAJOR, MINOR, PATCH
 
-__all__ = ["Version", "VersionError"]
+__all__ = ["Version", "VersionError", "MAJOR", "MINOR", "PATCH"]

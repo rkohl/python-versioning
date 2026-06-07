@@ -1,9 +1,20 @@
 # Version
-### Python Semantic Versioning
+## Python Semantic Versioning
 
-A lightweight Python library for parsing, comparing, and managing [Semantic Version](https://semver.org/) strings that gives you a single, well-tested `Version` class that handles the full SemVer specification correctly — including the subtleties of pre-release and build metadata ordering — with no external dependencies.
-___ 
+- **Single Class** &mdash; A single `Version` class that handles semantic versioning.
+- **Full SemVer Support** &mdash; Supports Major, minor, patch, pre-release and build metadata
+- **Comparable** &mdash; All six comparison operators are built in (`<`, `<=`, `>`, `>=`, `==`, `!=`)
+- **Track Multiple Versions** &mdash; Track mulitple versions in a single instance.
 
+`Version` is a lightweight Python library for working with [Semantic Version (SemVer)](https://semver.org/). It provides a single `Version` class that handles the full lifecycle of version strings — parsing, validating, comparing, and managing collections of them.
+
+At its core, the library solves a common pain point: version strings look simple but have non-obvious ordering rules, especially once pre-release tags and build metadata are involved. Rather than reaching for a heavyweight dependency or writing fragile string comparisons, you get a focused tool that implements the SemVer 2.0.0 spec correctly and completely. 
+
+A `Version` can be created from a single string or a list of strings. When given a list, it automatically filters out anything malformed and sets itself to the highest valid entry. From there you can add and remove versions from the tracked set, inspect the full list, or ask for the latest at any time — with the current version always kept in sync as the tracked set changes. 
+
+Comparisons use all six standard operators and follow the spec's precedence rules precisely: numeric identifiers sort as integers, alphanumeric identifiers sort lexically, numeric identifiers rank below alphanumeric ones, a shorter pre-release ranks below a longer one with the same prefix, and any pre-release at all ranks below the equivalent release version.
+
+---
 
 ### Installation
 
@@ -15,14 +26,6 @@ pip install python-versioning
 **Requirements:** Python 3.7+
 ___
 
-
-## Features
-- **Single Class** &mdash; A single `Version` class that handles semantic versioning.
-- **Full SemVer Support** &mdash; Supports Major, minor, patch, pre-release and build metadata
-- **Comparable** &mdash; All six comparison operators are built in (`<`, `<=`, `>`, `>=`, `==`, `!=`)
-- **Track Multiple Versions** &mdash; Track mulitple versions in a single instance.
-
----
 
 ## Usage
 

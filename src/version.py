@@ -13,6 +13,11 @@ _VERSION_REGEX = re.compile(
 )
 
 
+MAJOR = 'major'
+MINOR = 'minor'
+PATCH = 'patch'
+
+
 class VersionError(Exception):
     """Exception raised for invalid version strings."""
 
@@ -93,6 +98,19 @@ class Version:
         self._all_versions.remove(version)
 
     
+    def increment(self, part: str) -> None:
+        """Increment major, minor, or patch using the MAJOR, MINOR, or PATCH constants."""
+        if part == MAJOR:
+            new_version = f'{self.major + 1}.0.0'
+        elif part == MINOR:
+            new_version = f'{self.major}.{self.minor + 1}.0'
+        elif part == PATCH:
+            new_version = f'{self.major}.{self.minor}.{self.patch + 1}'
+        else:
+            raise ValueError(f'invalid part {part!r}: use MAJOR, MINOR, or PATCH')
+        self._all_versions.append(new_version)
+        self._parse(new_version)
+
     @property
     def latest(self) -> str:
         """Return the latest version from the tracked list."""

@@ -1,6 +1,6 @@
 import unittest
 
-from src import Version, VersionError
+from src import Version, VersionError, MAJOR, MINOR, PATCH
 
 class TestVersionParsing(unittest.TestCase):
     """Tests for parsing valid and invalid version strings."""
@@ -371,6 +371,74 @@ class TestVersionRemoveMethod(unittest.TestCase):
         remaining = [str(ver) for ver in v.versions]
         self.assertIn('1.0.0', remaining)
         self.assertIn('3.0.0', remaining)
+
+
+class TestVersionIncrementMethod(unittest.TestCase):
+    """Tests for the increment() method."""
+
+    def test_increment_patch(self):
+        v = Version('1.2.3')
+        v.increment(PATCH)
+        self.assertEqual(str(v), '1.2.4')
+
+    def test_increment_minor(self):
+        v = Version('1.2.3')
+        v.increment(MINOR)
+        self.assertEqual(str(v), '1.3.0')
+
+    def test_increment_major(self):
+        v = Version('1.2.3')
+        v.increment(MAJOR)
+        self.assertEqual(str(v), '2.0.0')
+
+    def test_increment_minor_resets_patch(self):
+        v = Version('1.2.9')
+        v.increment(MINOR)
+        self.assertEqual(str(v), '1.3.0')
+
+    def test_increment_major_resets_minor_and_patch(self):
+        v = Version('1.9.9')
+        v.increment(MAJOR)
+        self.assertEqual(str(v), '2.0.0')
+
+    def test_increment_adds_to_tracked_list(self):
+        v = Version('1.0.0')
+        v.increment(PATCH)
+        self.assertIn('1.0.1', v._all_versions)
+
+    def test_increment_tracked_count_increases(self):
+        v = Version('1.0.0')
+        v.increment(PATCH)
+        self.assertEqual(len(v._all_versions), 2)
+
+    def test_increment_updates_latest(self):
+        v = Version('1.0.0')
+        v.increment(MINOR)
+        self.assertEqual(v.latest, '1.1.0')
+
+    def test_increment_clears_pre_release(self):
+        v = Version('1.0.0-alpha')
+        v.increment(PATCH)
+        self.assertEqual(str(v), '1.0.1')
+        self.assertEqual(v.pre_release, [])
+
+    def test_increment_clears_build(self):
+        v = Version('1.0.0+build.1')
+        v.increment(PATCH)
+        self.assertEqual(str(v), '1.0.1')
+        self.assertEqual(v.build, [])
+
+    def test_increment_invalid_part_raises(self):
+        v = Version('1.0.0')
+        with self.assertRaises(ValueError):
+            v.increment('invalid')
+
+    def test_increment_multiple_times(self):
+        v = Version('1.0.0')
+        v.increment(PATCH)
+        v.increment(PATCH)
+        self.assertEqual(str(v), '1.0.2')
+        self.assertEqual(len(v._all_versions), 3)
 
 
 if __name__ == '__main__':
