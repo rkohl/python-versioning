@@ -1,6 +1,6 @@
 [project]
 name = "python-versioning"
-version = "1.0.0"
+version = "1.1.0"
 readme = "README.md"
 license = "MIT"
 description = "A lightweight Python library implementation for parsing, comparing, and managing semantic version strings."
